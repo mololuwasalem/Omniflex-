@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user profile and wallet balance.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "walletBalance": { "type": "number" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "walletBalance", "role"]
+    },
+    "GiftCard": {
+      "title": "Gift Card",
+      "description": "Defines a gift card product available for purchase.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "category": { "type": "string" },
+        "stock": { "type": "number" }
+      },
+      "required": ["name", "price", "stock"]
+    },
+    "GiftCardCode": {
+      "title": "Gift Card Code",
+      "description": "A specific code for a gift card.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "giftCardId": { "type": "string" },
+        "code": { "type": "string" },
+        "isSold": { "type": "boolean" },
+        "soldTo": { "type": "string" },
+        "soldAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["giftCardId", "code", "isSold"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Records all financial activities (funding and purchases).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["funding", "purchase"] },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "success", "failed"] },
+        "metadata": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "amount", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile and balance."
+    },
+    "/gift_cards/{cardId}": {
+      "schema": "GiftCard",
+      "description": "Available gift card products."
+    },
+    "/gift_card_codes/{codeId}": {
+      "schema": "GiftCardCode",
+      "description": "Individual gift card codes (admin only access)."
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "History of all transactions."
+    }
+  }
+}
