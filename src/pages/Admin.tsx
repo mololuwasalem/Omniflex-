@@ -78,7 +78,7 @@ export const Admin = () => {
           <button
             onClick={seedData}
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-indigo-100"
+            className="w-full bg-teal-600 text-white py-4 rounded-2xl font-bold hover:bg-teal-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-teal-100"
           >
             {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Plus className="w-6 h-6" /> Seed Sample Data</>}
           </button>

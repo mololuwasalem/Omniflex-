@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Transaction } from '../types';
-import { useAuth } from '../components/FirebaseProvider';
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'motion/react';
 import { History, ArrowUpRight, ShoppingBag, Loader2, Calendar, CreditCard } from 'lucide-react';
 import { format } from 'date-fns';

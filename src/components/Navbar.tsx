@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './FirebaseProvider';
+import { useAuth } from '../context/AuthContext';
 import { auth } from '../firebase';
-import { Wallet, LogOut, Gift, History, LayoutDashboard, Menu, X } from 'lucide-react';
+import { Wallet, LogOut, Gift, History, LayoutDashboard, Menu, X, CreditCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const Navbar = () => {
@@ -30,12 +30,26 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-100">
-                <Gift className="text-white w-6 h-6" />
+            <Link to="/" className="flex-shrink-0 flex items-center gap-3">
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                {/* Swirl effect background */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-teal-600 to-teal-400 rounded-full animate-pulse opacity-20"></div>
+                <div className="absolute inset-0 border-2 border-teal-500/30 rounded-full border-t-teal-500 border-r-transparent animate-[spin_3s_linear_infinite]"></div>
+                
+                {/* Gold Card Icon */}
+                <div className="relative bg-amber-400 w-7 h-5 rounded-sm shadow-sm flex items-center justify-center overflow-hidden">
+                  <div className="absolute top-1 left-1 w-2 h-1 bg-amber-600/30 rounded-full"></div>
+                  <CreditCard className="text-white w-4 h-4" />
+                  <div className="absolute top-0.5 right-0.5">
+                    <div className="w-1 h-1 bg-white rounded-full animate-ping"></div>
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col -space-y-1">
-                <span className="text-xl font-extrabold text-gray-900 tracking-tighter">OmniFlex</span>
+                <div className="text-xl font-extrabold tracking-tighter flex">
+                  <span className="text-gray-900">Omni</span>
+                  <span className="text-amber-500">Flex</span>
+                </div>
                 <span className="text-[10px] font-medium text-teal-600 uppercase tracking-widest">by PayBridge</span>
               </div>
             </Link>
@@ -44,7 +58,7 @@ export const Navbar = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                  className="text-gray-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   <item.icon className="w-4 h-4" />
                   {item.name}
@@ -56,9 +70,9 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100">
-                  <Wallet className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm font-semibold text-indigo-700">
+                <div className="flex items-center gap-2 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-100">
+                  <Wallet className="w-4 h-4 text-teal-600" />
+                  <span className="text-sm font-semibold text-teal-700">
                     ₦{profile?.walletBalance.toLocaleString() || '0'}
                   </span>
                 </div>
@@ -71,8 +85,8 @@ export const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to="/login" className="text-gray-600 hover:text-indigo-600 text-sm font-medium">Login</Link>
-                <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-all shadow-sm">
+                <Link to="/login" className="text-gray-600 hover:text-teal-600 text-sm font-medium">Login</Link>
+                <Link to="/register" className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition-all shadow-sm">
                   Get Started
                 </Link>
               </div>
@@ -105,7 +119,7 @@ export const Navbar = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50"
                 >
                   <div className="flex items-center gap-3">
                     <item.icon className="w-5 h-5" />
@@ -126,7 +140,7 @@ export const Navbar = () => {
               ) : (
                 <div className="space-y-1 pt-2 border-t border-gray-100">
                   <Link to="/login" className="block px-3 py-2 text-gray-700 font-medium">Login</Link>
-                  <Link to="/register" className="block px-3 py-2 text-indigo-600 font-medium">Register</Link>
+                  <Link to="/register" className="block px-3 py-2 text-teal-600 font-medium">Register</Link>
                 </div>
               )}
             </div>

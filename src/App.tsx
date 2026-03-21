@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { FirebaseProvider } from './components/FirebaseProvider';
+import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { AuthPage } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
@@ -10,7 +10,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 export default function App() {
   return (
-    <FirebaseProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-50 font-sans text-gray-900 antialiased">
           <Navbar />
@@ -49,6 +49,6 @@ export default function App() {
           </main>
         </div>
       </Router>
-    </FirebaseProvider>
+    </AuthProvider>
   );
 }

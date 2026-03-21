@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { GiftCard } from '../types';
-import { useAuth } from '../components/FirebaseProvider';
+import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Loader2, Search, Filter, Tag, X, CheckCircle2 } from 'lucide-react';
-import axios from 'axios';
+import { buyGiftCard } from '../services/api';
 
 export const GiftCards = () => {
   const { profile, user } = useAuth();
@@ -38,11 +38,8 @@ export const GiftCards = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/buy', {
-        userId: user?.uid,
-        giftCardId: card.id
-      });
-      setPurchaseResult(response.data);
+      const data = await buyGiftCard(user?.uid || '', card.id);
+      setPurchaseResult(data);
     } catch (err: any) {
       setError(err.response?.data?.error || err.message);
     } finally {
@@ -60,7 +57,7 @@ export const GiftCards = () => {
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+        <Loader2 className="w-10 h-10 text-teal-600 animate-spin" />
       </div>
     );
   }
@@ -125,7 +122,7 @@ export const GiftCards = () => {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-indigo-600 shadow-sm">
+              <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-teal-600 shadow-sm">
                 {card.category || 'Gift Card'}
               </div>
             </div>

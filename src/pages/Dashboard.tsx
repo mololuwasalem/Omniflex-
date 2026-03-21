@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../components/FirebaseProvider';
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'motion/react';
 import { Wallet, ArrowUpRight, ShoppingBag, CreditCard, ChevronRight, Loader2, CheckCircle2, XCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { initializePayment } from '../services/api';
 
 export const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -22,14 +22,10 @@ export const Dashboard = () => {
         throw new Error('Minimum funding amount is ₦100');
       }
 
-      const response = await axios.post('/api/fund/initialize', {
-        amount,
-        email: user?.email,
-        userId: user?.uid
-      });
+      const data = await initializePayment(amount, user?.email || '', user?.uid || '');
 
-      if (response.data.status) {
-        window.location.href = response.data.data.authorization_url;
+      if (data.status) {
+        window.location.href = data.data.authorization_url;
       } else {
         throw new Error('Failed to initialize payment');
       }
@@ -102,14 +98,14 @@ export const Dashboard = () => {
                 min="100"
                 value={fundingAmount}
                 onChange={(e) => setFundingAmount(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="Enter amount (min ₦100)"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-indigo-200"
+              className="w-full bg-teal-600 text-white py-3 rounded-xl font-semibold hover:bg-teal-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-teal-200"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Fund Now with Paystack'}
             </button>
@@ -124,37 +120,37 @@ export const Dashboard = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
           <Link
             to="/gift-cards"
-            className="group block bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-indigo-200 transition-all"
+            className="group block bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 transition-all"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="bg-indigo-100 p-3 rounded-xl group-hover:bg-indigo-600 transition-colors">
-                  <Gift className="w-6 h-6 text-indigo-600 group-hover:text-white" />
+                <div className="bg-teal-50 p-3 rounded-xl group-hover:bg-teal-600 transition-colors">
+                  <Gift className="w-6 h-6 text-teal-600 group-hover:text-white" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">Buy Gift Cards</p>
                   <p className="text-sm text-gray-500">Browse our collection of premium cards</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 transition-colors" />
             </div>
           </Link>
 
           <Link
             to="/transactions"
-            className="group block bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-emerald-200 transition-all"
+            className="group block bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 transition-all"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="bg-emerald-100 p-3 rounded-xl group-hover:bg-emerald-600 transition-colors">
-                  <History className="w-6 h-6 text-emerald-600 group-hover:text-white" />
+                <div className="bg-blue-50 p-3 rounded-xl group-hover:bg-blue-600 transition-colors">
+                  <History className="w-6 h-6 text-blue-600 group-hover:text-white" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">Transaction History</p>
                   <p className="text-sm text-gray-500">View your past purchases and fundings</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
             </div>
           </Link>
         </section>

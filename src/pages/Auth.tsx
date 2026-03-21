@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../firebase';
 import { motion } from 'motion/react';
-import { Gift, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
+import { Gift, Mail, Lock, User, ArrowRight, Loader2, CreditCard } from 'lucide-react';
 
 export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
   const [email, setEmail] = useState('');
@@ -41,14 +41,27 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
         className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-teal-500 to-blue-600 rounded-3xl mb-4 shadow-xl shadow-teal-100">
-            <Gift className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl mb-6 shadow-xl shadow-teal-100 relative overflow-hidden">
+            {/* Swirl effect */}
+            <div className="absolute inset-0 border-4 border-white/20 rounded-full border-t-white animate-[spin_4s_linear_infinite] -m-4"></div>
+            
+            {/* Gold Card */}
+            <div className="relative bg-amber-400 w-12 h-8 rounded-md shadow-lg flex items-center justify-center overflow-hidden">
+              <div className="absolute top-1.5 left-1.5 w-3 h-2 bg-amber-600/30 rounded-full"></div>
+              <CreditCard className="text-white w-6 h-6" />
+              <div className="absolute top-1 right-1">
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+              </div>
+            </div>
           </div>
           <div className="flex flex-col items-center">
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tighter">OmniFlex</h1>
-            <span className="text-xs font-bold text-teal-600 uppercase tracking-[0.2em] -mt-1">by PayBridge</span>
+            <div className="text-4xl font-extrabold tracking-tighter flex">
+              <span className="text-gray-900">Omni</span>
+              <span className="text-amber-500">Flex</span>
+            </div>
+            <span className="text-xs font-bold text-teal-600 uppercase tracking-[0.3em] mt-1">by PayBridge</span>
           </div>
-          <p className="text-gray-500 mt-4">
+          <p className="text-gray-500 mt-6">
             {mode === 'login' ? 'Access your OmniFlex wallet' : 'Start your journey with OmniFlex'}
           </p>
         </div>
@@ -70,7 +83,7 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="John Doe"
                 />
               </div>
@@ -86,7 +99,7 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="you@example.com"
               />
             </div>
@@ -101,7 +114,7 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -110,7 +123,7 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-indigo-200"
+            className="w-full bg-teal-600 text-white py-3 rounded-xl font-semibold hover:bg-teal-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-teal-200"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -128,7 +141,7 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
             {mode === 'login' ? "Don't have an account?" : "Already have an account?"}{' '}
             <Link
               to={mode === 'login' ? '/register' : '/login'}
-              className="text-indigo-600 font-semibold hover:underline"
+              className="text-teal-600 font-semibold hover:underline"
             >
               {mode === 'login' ? 'Sign Up' : 'Log In'}
             </Link>
