@@ -3,7 +3,6 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { GiftCard } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Loader2, Search, Filter, Tag, X, CheckCircle2 } from 'lucide-react';
 import { buyGiftCard } from '../services/api';
 
@@ -30,7 +29,7 @@ export const GiftCards = () => {
 
   const handleBuy = async (card: GiftCard) => {
     if (!profile || profile.walletBalance < card.price) {
-      setError('Insufficient balance. Please fund your wallet.');
+      setError('Insufficient balance. Please fund your wallet to purchase this card.');
       return;
     }
 
@@ -41,7 +40,26 @@ export const GiftCards = () => {
       const data = await buyGiftCard(user?.uid || '', card.id);
       setPurchaseResult(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || err.message);
+      let message = 'An unexpected error occurred. Please try again.';
+      
+      if (err.response) {
+        // Server responded with a status code outside the 2xx range
+        const backendError = err.response.data?.error;
+        if (backendError === 'Insufficient balance') {
+          message = 'Your wallet balance is too low for this purchase.';
+        } else if (backendError === 'No codes available for this card' || backendError === 'Out of stock') {
+          message = 'Sorry, this gift card is currently out of stock.';
+        } else if (backendError === 'Code was just sold. Please try again.') {
+          message = 'The last available code was just sold. Please try another card.';
+        } else if (backendError) {
+          message = backendError;
+        }
+      } else if (err.request) {
+        // Request was made but no response was received
+        message = 'Network error. Please check your internet connection and try again.';
+      }
+      
+      setError(message);
     } finally {
       setBuying(null);
     }
@@ -108,11 +126,8 @@ export const GiftCards = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredCards.map((card) => (
-          <motion.div
+          <div
             key={card.id}
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col"
           >
             <div className="aspect-video bg-gray-100 relative group overflow-hidden">
@@ -147,46 +162,39 @@ export const GiftCards = () => {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Purchase Success Modal */}
-      <AnimatePresence>
-        {purchaseResult && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center"
-            >
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Purchase Successful!</h2>
-              <p className="text-gray-500 mb-6">Your {purchaseResult.cardName} code is ready.</p>
-              
-              <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-200 mb-8">
-                <p className="text-xs text-gray-400 uppercase font-bold mb-2">Gift Card Code</p>
-                <p className="text-3xl font-mono font-bold text-teal-600 tracking-widest select-all">
-                  {purchaseResult.code}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setPurchaseResult(null)}
-                className="w-full bg-teal-600 text-white py-4 rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-100"
-              >
-                Close & Continue
-              </button>
-              <p className="mt-4 text-xs text-gray-400">
-                This code has also been saved to your transaction history.
+      {purchaseResult && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Purchase Successful!</h2>
+            <p className="text-gray-500 mb-6">Your {purchaseResult.cardName} code is ready.</p>
+            
+            <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-200 mb-8">
+              <p className="text-xs text-gray-400 uppercase font-bold mb-2">Gift Card Code</p>
+              <p className="text-3xl font-mono font-bold text-teal-600 tracking-widest select-all">
+                {purchaseResult.code}
               </p>
-            </motion.div>
+            </div>
+
+            <button
+              onClick={() => setPurchaseResult(null)}
+              className="w-full bg-teal-600 text-white py-4 rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-100"
+            >
+              Close & Continue
+            </button>
+            <p className="mt-4 text-xs text-gray-400">
+              This code has also been saved to your transaction history.
+            </p>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };

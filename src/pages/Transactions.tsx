@@ -3,7 +3,6 @@ import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestor
 import { db } from '../firebase';
 import { Transaction } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
 import { History, ArrowUpRight, ShoppingBag, Loader2, Calendar, CreditCard } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -55,10 +54,8 @@ export const Transactions = () => {
       ) : (
         <div className="space-y-4">
           {transactions.map((tx) => (
-            <motion.div
+            <div
               key={tx.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
               className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4">
@@ -96,7 +93,7 @@ export const Transactions = () => {
                   </p>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

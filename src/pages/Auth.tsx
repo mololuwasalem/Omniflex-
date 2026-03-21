@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, Mail, Lock, User, ArrowRight, Loader2, CreditCard, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) => {
@@ -34,7 +33,36 @@ export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) 
         setSuccess('Password reset link sent to your email!');
       }
     } catch (err: any) {
-      setError(err.message);
+      let message = 'An unexpected error occurred. Please try again.';
+      
+      if (err.code) {
+        switch (err.code) {
+          case 'auth/user-not-found':
+            message = 'No account found with this email address.';
+            break;
+          case 'auth/wrong-password':
+            message = 'Incorrect password. Please try again.';
+            break;
+          case 'auth/email-already-in-use':
+            message = 'An account already exists with this email address.';
+            break;
+          case 'auth/weak-password':
+            message = 'Password should be at least 6 characters.';
+            break;
+          case 'auth/invalid-email':
+            message = 'Please enter a valid email address.';
+            break;
+          case 'auth/network-request-failed':
+            message = 'Network error. Please check your connection.';
+            break;
+          default:
+            message = err.message || message;
+        }
+      } else {
+        message = err.message || message;
+      }
+      
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -42,11 +70,7 @@ export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) 
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4 bg-gray-50">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
-      >
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl mb-6 shadow-xl shadow-teal-100 relative overflow-hidden">
             {/* Swirl effect */}
@@ -75,31 +99,19 @@ export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) 
           </p>
         </div>
 
-        <AnimatePresence mode="wait">
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-3"
-            >
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
-              {error}
-            </motion.div>
-          )}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            {error}
+          </div>
+        )}
 
-          {success && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 p-4 bg-teal-50 border border-teal-100 text-teal-600 text-sm rounded-xl flex items-center gap-3"
-            >
-              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-              {success}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {success && (
+          <div className="mb-6 p-4 bg-teal-50 border border-teal-100 text-teal-600 text-sm rounded-xl flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+            {success}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
@@ -205,7 +217,7 @@ export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) 
             )}
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

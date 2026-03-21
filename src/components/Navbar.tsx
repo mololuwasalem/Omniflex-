@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { auth } from '../firebase';
 import { Wallet, LogOut, Gift, History, LayoutDashboard, Menu, X, CreditCard } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = () => {
   const { user, profile, isAdmin } = useAuth();
@@ -105,48 +104,41 @@ export const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
-          >
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {user && navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5" />
-                    {item.name}
-                  </div>
-                </Link>
-              ))}
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <LogOut className="w-5 h-5" />
-                    Logout
-                  </div>
-                </button>
-              ) : (
-                <div className="space-y-1 pt-2 border-t border-gray-100">
-                  <Link to="/login" className="block px-3 py-2 text-gray-700 font-medium">Login</Link>
-                  <Link to="/register" className="block px-3 py-2 text-teal-600 font-medium">Register</Link>
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 overflow-hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {user && navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50"
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5" />
+                  {item.name}
                 </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </Link>
+            ))}
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
+              >
+                <div className="flex items-center gap-3">
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </div>
+              </button>
+            ) : (
+              <div className="space-y-1 pt-2 border-t border-gray-100">
+                <Link to="/login" className="block px-3 py-2 text-gray-700 font-medium">Login</Link>
+                <Link to="/register" className="block px-3 py-2 text-teal-600 font-medium">Register</Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

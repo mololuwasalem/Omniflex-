@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { Wallet, ArrowUpRight, ShoppingBag, CreditCard, ChevronRight, Loader2, CheckCircle2, XCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { initializePayment } from '../services/api';
+import { Wallet, ArrowUpRight, ShoppingBag, CreditCard, ChevronRight, Loader2, CheckCircle2, XCircle, Gift, History } from 'lucide-react';
 
 export const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -27,10 +26,18 @@ export const Dashboard = () => {
       if (data.status) {
         window.location.href = data.data.authorization_url;
       } else {
-        throw new Error('Failed to initialize payment');
+        throw new Error(data.message || 'Failed to initialize payment');
       }
     } catch (err: any) {
-      setError(err.message);
+      let message = 'An error occurred while initializing payment.';
+      if (err.response) {
+        message = err.response.data?.error || err.response.data?.message || message;
+      } else if (err.request) {
+        message = 'Network error. Please check your connection.';
+      } else {
+        message = err.message || message;
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -55,9 +62,8 @@ export const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {stats.map((stat) => (
-          <motion.div
+          <div
             key={stat.name}
-            whileHover={{ y: -4 }}
             className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
           >
             <div className={`${stat.color} p-3 rounded-xl`}>
@@ -67,7 +73,7 @@ export const Dashboard = () => {
               <p className="text-sm font-medium text-gray-500">{stat.name}</p>
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
