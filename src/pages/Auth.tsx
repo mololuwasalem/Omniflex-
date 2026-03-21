@@ -1,31 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
-import { motion } from 'motion/react';
-import { Gift, Mail, Lock, User, ArrowRight, Loader2, CreditCard } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Gift, Mail, Lock, User, ArrowRight, Loader2, CreditCard, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
+export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) => {
+  const [mode, setMode] = useState<'login' | 'register' | 'reset'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
 
     try {
       if (mode === 'register') {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
-      } else {
+        navigate('/dashboard');
+      } else if (mode === 'login') {
         await signInWithEmailAndPassword(auth, email, password);
+        navigate('/dashboard');
+      } else if (mode === 'reset') {
+        await sendPasswordResetEmail(auth, email);
+        setSuccess('Password reset link sent to your email!');
       }
-      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -62,15 +69,37 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
             <span className="text-xs font-bold text-teal-600 uppercase tracking-[0.3em] mt-1">by PayBridge</span>
           </div>
           <p className="text-gray-500 mt-6">
-            {mode === 'login' ? 'Access your OmniFlex wallet' : 'Start your journey with OmniFlex'}
+            {mode === 'login' && 'Access your OmniFlex wallet'}
+            {mode === 'register' && 'Start your journey with OmniFlex'}
+            {mode === 'reset' && 'Reset your OmniFlex password'}
           </p>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl">
-            {error}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-3"
+            >
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              {error}
+            </motion.div>
+          )}
+
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 p-4 bg-teal-50 border border-teal-100 text-teal-600 text-sm rounded-xl flex items-center gap-3"
+            >
+              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+              {success}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
@@ -105,20 +134,33 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                placeholder="••••••••"
-              />
+          {mode !== 'reset' && (
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700">Password</label>
+                {mode === 'login' && (
+                  <button
+                    type="button"
+                    onClick={() => setMode('reset')}
+                    className="text-xs font-semibold text-teal-600 hover:text-teal-700"
+                  >
+                    Forgot Password?
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             type="submit"
@@ -129,7 +171,9 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                {mode === 'login' ? 'Sign In' : 'Create Account'}
+                {mode === 'login' && 'Sign In'}
+                {mode === 'register' && 'Create Account'}
+                {mode === 'reset' && 'Send Reset Link'}
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
@@ -138,13 +182,27 @@ export const AuthPage = ({ mode }: { mode: 'login' | 'register' }) => {
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm">
-            {mode === 'login' ? "Don't have an account?" : "Already have an account?"}{' '}
-            <Link
-              to={mode === 'login' ? '/register' : '/login'}
-              className="text-teal-600 font-semibold hover:underline"
-            >
-              {mode === 'login' ? 'Sign Up' : 'Log In'}
-            </Link>
+            {mode === 'login' && (
+              <>
+                Don't have an account?{' '}
+                <button onClick={() => setMode('register')} className="text-teal-600 font-semibold hover:underline">
+                  Sign Up
+                </button>
+              </>
+            )}
+            {mode === 'register' && (
+              <>
+                Already have an account?{' '}
+                <button onClick={() => setMode('login')} className="text-teal-600 font-semibold hover:underline">
+                  Log In
+                </button>
+              </>
+            )}
+            {mode === 'reset' && (
+              <button onClick={() => setMode('login')} className="text-teal-600 font-semibold hover:underline">
+                Back to Login
+              </button>
+            )}
           </p>
         </div>
       </motion.div>
