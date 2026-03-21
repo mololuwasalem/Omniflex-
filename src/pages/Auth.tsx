@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, Mail, Lock, User, ArrowRight, Loader2, CreditCard, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export const AuthPage = ({ mode: initialMode }: { mode: 'login' | 'register' }) => {

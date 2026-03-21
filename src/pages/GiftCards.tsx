@@ -3,7 +3,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { GiftCard } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Loader2, Search, Filter, Tag, X, CheckCircle2 } from 'lucide-react';
 import { buyGiftCard } from '../services/api';
 

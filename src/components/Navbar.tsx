@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { auth } from '../firebase';
 import { Wallet, LogOut, Gift, History, LayoutDashboard, Menu, X, CreditCard } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = () => {
   const { user, profile, isAdmin } = useAuth();

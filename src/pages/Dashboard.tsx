@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Wallet, ArrowUpRight, ShoppingBag, CreditCard, ChevronRight, Loader2, CheckCircle2, XCircle, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { initializePayment } from '../services/api';

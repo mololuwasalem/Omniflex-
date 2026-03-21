@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Database, Plus, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const Admin = () => {
