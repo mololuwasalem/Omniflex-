@@ -27,4 +27,9 @@ export const buyGiftCard = async (userId: string, giftCardId: string) => {
   return response.data;
 };
 
+export const getMyGiftCards = async (userId: string) => {
+  const response = await api.get(`/buy/my-cards/${userId}`);
+  return response.data;
+};
+
 export default api;

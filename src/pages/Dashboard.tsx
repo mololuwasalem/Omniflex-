@@ -31,7 +31,11 @@ export const Dashboard = () => {
     } catch (err: any) {
       let message = 'An error occurred while initializing payment.';
       if (err.response) {
-        message = err.response.data?.error || err.response.data?.message || message;
+        const errorData = err.response.data;
+        message = errorData?.details || errorData?.error || errorData?.message || message;
+        if (errorData?.type === 'validation_error') {
+          message = `Validation Error: ${message}`;
+        }
       } else if (err.request) {
         message = 'Network error. Please check your connection.';
       } else {

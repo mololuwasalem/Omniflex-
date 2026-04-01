@@ -140,6 +140,15 @@ export const GiftCards = () => {
               <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-teal-600 shadow-sm">
                 {card.category || 'Gift Card'}
               </div>
+              {card.tag && (
+                <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md border ${
+                  card.tag === 'Popular' 
+                    ? 'bg-amber-400/90 text-amber-950 border-amber-200' 
+                    : 'bg-indigo-500/90 text-white border-indigo-300'
+                }`}>
+                  {card.tag}
+                </div>
+              )}
             </div>
             <div className="p-5 flex-1 flex flex-col">
               <h3 className="text-lg font-bold text-gray-900 mb-1">{card.name}</h3>

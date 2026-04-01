@@ -1,6 +1,51 @@
 import { Request, Response } from 'express';
 import admin, { db } from '../db';
 
+export const getMyGiftCards = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  
+  // Security check: ensure the userId matches the authenticated user
+  const decodedToken = (req as any).user;
+  if (decodedToken.uid !== userId) {
+    return res.status(403).json({ error: 'Unauthorized: UID mismatch' });
+  }
+
+  try {
+    console.log(`Fetching transactions for user: ${userId} on database: ${db.databaseId}`);
+    const transactionsSnapshot = await db.collection('transactions')
+      .where('userId', '==', userId)
+      .get();
+    
+    console.log(`Found ${transactionsSnapshot.size} transactions`);
+
+    const cards = transactionsSnapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          type: data.type,
+          status: data.status,
+          brand: data.metadata?.giftCardName || 'Unknown Brand',
+          code: data.metadata?.code || 'N/A',
+          value: data.amount,
+          purchaseDate: data.createdAt?.toDate ? data.createdAt.toDate() : null,
+          expiryDate: data.createdAt?.toDate ? new Date(data.createdAt.toDate().getTime() + 365 * 24 * 60 * 60 * 1000) : null
+        };
+      })
+      .filter(card => card.type === 'purchase' && card.status === 'success')
+      .sort((a, b) => {
+        const dateA = a.purchaseDate ? new Date(a.purchaseDate).getTime() : 0;
+        const dateB = b.purchaseDate ? new Date(b.purchaseDate).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    res.json(cards);
+  } catch (error: any) {
+    console.error('Fetch my cards error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const buyGiftCard = async (req: Request, res: Response) => {
   const { userId, giftCardId } = req.body;
   

@@ -12,10 +12,10 @@ export const Admin = () => {
     setStatus(null);
     try {
       const giftCards = [
-        { name: 'Amazon Gift Card', price: 5000, category: 'Shopping', stock: 10, description: 'Shop millions of items on Amazon.com' },
+        { name: 'Amazon Gift Card', price: 5000, category: 'Shopping', stock: 10, description: 'Shop millions of items on Amazon.com', tag: 'Popular' },
         { name: 'iTunes Gift Card', price: 2500, category: 'Music', stock: 5, description: 'Get music, movies, and more on the iTunes Store' },
-        { name: 'Google Play Card', price: 3000, category: 'Apps', stock: 8, description: 'Buy apps, games, and more on Google Play' },
-        { name: 'Netflix Gift Card', price: 4500, category: 'Streaming', stock: 12, description: 'Watch your favorite movies and TV shows on Netflix' },
+        { name: 'Google Play Card', price: 3000, category: 'Apps', stock: 8, description: 'Buy apps, games, and more on Google Play', tag: 'Featured' },
+        { name: 'Netflix Gift Card', price: 4500, category: 'Streaming', stock: 12, description: 'Watch your favorite movies and TV shows on Netflix', tag: 'Popular' },
         { name: 'Steam Gift Card', price: 10000, category: 'Gaming', stock: 3, description: 'Buy games and software on the Steam platform' },
       ];
 

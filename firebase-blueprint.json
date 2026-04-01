@@ -25,7 +25,8 @@
         "price": { "type": "number" },
         "imageUrl": { "type": "string" },
         "category": { "type": "string" },
-        "stock": { "type": "number" }
+        "stock": { "type": "number" },
+        "tag": { "type": "string", "enum": ["Popular", "Featured"] }
       },
       "required": ["name", "price", "stock"]
     },

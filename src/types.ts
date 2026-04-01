@@ -17,6 +17,7 @@ export interface GiftCard {
   imageUrl?: string;
   category?: string;
   stock: number;
+  tag?: 'Popular' | 'Featured';
 }
 
 export interface GiftCardCode {

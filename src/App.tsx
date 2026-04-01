@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { AuthPage } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { GiftCards } from './pages/GiftCards';
+import { MyGiftCards } from './pages/MyGiftCards';
 import { Transactions } from './pages/Transactions';
 import { Admin } from './pages/Admin';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -29,6 +30,12 @@ export default function App() {
               <Route path="/gift-cards" element={
                 <ProtectedRoute>
                   <GiftCards />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/my-gift-cards" element={
+                <ProtectedRoute>
+                  <MyGiftCards />
                 </ProtectedRoute>
               } />
               

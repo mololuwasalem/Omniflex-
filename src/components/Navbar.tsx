@@ -17,6 +17,7 @@ export const Navbar = () => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Gift Cards', path: '/gift-cards', icon: Gift },
+    { name: 'My Cards', path: '/my-gift-cards', icon: CreditCard },
     { name: 'Transactions', path: '/transactions', icon: History },
   ];
 
